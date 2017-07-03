@@ -1,6 +1,124 @@
 
 #Breakdancer
+
+
 #Delly
+
+
+moudle load delly
+wd=/scratch/car0019/bams/
+cd ${wd}
+ref=rheMac3.masked.fa
+delly call -t DEL -g ${wd}${ref} -e illumina ${wd}${input_bam1} -o ${input_bam1}.del.bcf
+delly call -t DUP -g ${wd}${ref} -e illumina ${wd}${input_bam1} -o ${input_bam1}.dup.bcf
+delly call -t TRA -g ${data_dir}${ref} -e illumina ${wd}${input_bam1} -o ${input_bam1}.tra.bcf
+delly call -t INS -g ${data_dir}${ref} -e illumina ${wd}${input_bam1} -o ${input_bam1}.ins.bcf
+delly call -t INV -g ${data_dir}${ref} -e illumina ${wd}${input_bam1} -o ${input_bam1}.inv.bcf
+
 #Lumpy 
 #CNVnator
+module load gcc/5.3.0
+module load openmpi/gcc/5.3.0/1.10.2
+module load python/2.7.12
+module load root/v6.08.02
+module load samtools/1.3.1
+module load zlib/1.2.8
+module load cnvnator/0.3.2
+module load xz/5.2.2
+
+wd=/scratch/car0019/bams/
+cd ${wd}
+
+#Rhesus
+
+cnvnator -root out1.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -tree M_Rhesus.wrg.sorted.mkdup.indel.recal2.bam
+cnvnator -root out1.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -his 100
+cnvnator -root out1.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -stat 100
+cnvnator -root out1.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -partition 100
+cnvnator -root out1.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -call 100 > out1.100.cnvnator
+
+#FAS
+cnvnator -root out2.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -tree  M_Fascicularis.second_pass.bqsr.bam
+cnvnator -root out2.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -his 100
+cnvnator -root out2.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -stat 100
+cnvnator -root out2.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -partition 100
+cnvnator -root out2.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -call 100 > out2.100.cnvnator
+
+#THIB
+cnvnator -root out3.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -tree M_Thibetana.second_pass.recalibrated.bam
+cnvnator -root out3.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -his 100
+cnvnator -root out3.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -stat 100
+cnvnator -root out3.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -partition 100
+cnvnator -root out3.root -genome rheMac3.masked.fa -chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chrX -call 100 > out3.100.cnvnator
+
+
+Alternative CNV using python
+
+#!/bin/python
+import os
+import subprocess
+ 
+import numpy as np
+import pandas as pd
+ 
+from sample_class import Sample
+from custom_parser import Parser
+from pipeline_tools import file_checker
+ 
+ 
+parser = Parser(description = "Variant call samples using CNVnator")
+parser.add_argument('-sample', type=str, required=True, help="Sample name")
+parser.add_argument('-root', type=str, required=True, help="Filepath to root file for CNVnator calling")
+parser.add_argument('-histroot', type=str, required=True, help="Filepath to histroot file for CNVnator calling")
+parser.add_argument('-bam', type=str, required=True, help="Path to bam for variant calling")
+parser.add_argument('-window', type=int, help='Window size for CNVnator partitioning')
+parser.add_argument('-chromosomes', type=str, help="Path to chromosome fasta files for CNVnator.")
+ 
+ARGS = parser.parse_args()
+SAMPLE = ARGS.sample
+ROOT = ARGS.root
+HISTROOT = ARGS.histroot
+BAM = ARGS.bam
+WINDOW = ARGS.window
+CHROMOSOMES = ARGS.chromosomes
+ 
+def call_constructor():
+    calls = {}
+    calls['1'] = 'cnvnator -root %s -tree %s -unique' % (ROOT, BAM)
+    calls['2'] = 'cnvnator -root %s -outroot %s -his %s -d %s' % (ROOT, HISTROOT, WINDOW, CHROMOSOMES)
+    calls['3'] = 'cnvnator -root %s -stat %s'  % (HISTROOT, WINDOW)
+    calls['4'] = 'cnvnator -root %s -partition %s'  % (HISTROOT, WINDOW)
+    calls['5'] = 'cnvnator -root %s -call %s'  % (HISTROOT, WINDOW)
+    return calls
+ 
+def cnvnator_calling(calls):
+    for stage in range(1,4):
+        print calls[str(stage)]
+        subprocess.call(calls[str(stage)], shell=True)
+    output = subprocess.check_output(calls['5'], shell=True)
+    return output
+ 
+def write_output(output):
+    fout = '%s.cnvnator.txt' % (SAMPLE)
+    with open(fout, 'w+') as out:
+        out.writelines(output)
+ 
+ 
+def main():
+    calls = call_constructor()
+    output = cnvnator_calling(calls)
+    write_output(output)
+ 
+main()
+
+
+
 #Pindel 
+
+module load pindel/0.2.5b9
+
+wd=/scratch/car0019/bams/
+
+cd ${wd}
+
+pindel -T 8 -f rheMac3.masked.fa -i config.txt -c ALL -o RHE
