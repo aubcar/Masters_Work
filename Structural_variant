@@ -151,3 +151,5 @@ pindel -T 8 -f rheMac3.masked.fa -i config.txt -c ALL -o RHE
 #Output filtering
 
 Samples were convted first into VCF files and then into Bedpe files for ease of filtering
+A variant must be in 3/5 programs to be considered valid 
+
