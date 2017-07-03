@@ -145,3 +145,9 @@ wd=/scratch/car0019/bams/
 cd ${wd}
 
 pindel -T 8 -f rheMac3.masked.fa -i config.txt -c ALL -o RHE
+
+
+
+#Output filtering
+
+Samples were convted first into VCF files and then into Bedpe files for ease of filtering
