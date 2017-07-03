@@ -44,12 +44,19 @@ Source: Link to paper in NCBI. https://www.ncbi.nlm.nih.gov/pubmed/22002653
 
 #Things done
 Downloaded publically aviable Genomic and RNA data, run through GATK best practices pipeline(See sample prep) 
+
 Genomic samples were run through 5 SV prorams, and three divergence statistics 
+
 RNA samples were run through two Differential gene expression programs.
 
+PCR of putative breakpoint regions
 
 #Programs created 
 
+Gc calculator
+
 Crossover counter
+
 Blast breakpoint parser 
+
 High quality Variant collater 
