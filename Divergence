@@ -1,1 +1,7 @@
 
+bgzip
+tabix
+vcf merge
+vcf --wier fst
+vcf tajimas D
+vcf window pi
