@@ -65,6 +65,4 @@ High quality Variant collater
 
 Plasticity 
 
-5 species 
-
-rhesusfas SV
+ 
